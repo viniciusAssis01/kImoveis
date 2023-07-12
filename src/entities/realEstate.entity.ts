@@ -25,16 +25,16 @@ export class RealEstate{
 
     @OneToOne(()=>E.Address, (addresses)=>addresses.realEstate)
     @JoinColumn()
-    address: E.Address
+    address: E.Address;
 
     @ManyToOne(()=>E.Category, (category)=>category.id)
     @JoinColumn()
-    category: E.Category
+    category: E.Category;
     //o joinColumn vai colocar o sufixo Id no nome da coluna lá no DB, mas aqui ele fica com esse nome
     //sem ou com o JOINcolum acho q dá na msm
 
     @OneToMany(()=>E.Schedule, (schedules)=>schedules.realEstate)
-    schedules: E.Schedule[]
+    schedules: E.Schedule[];
 }
 
 /* 

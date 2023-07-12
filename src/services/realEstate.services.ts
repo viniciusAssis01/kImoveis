@@ -1,11 +1,14 @@
+import { realEstateSchema } from './../schemas/realState.schema';
 import * as I from "../interfaces";
 import * as E from "../entities";
+import * as S from "../schemas"
 import { addressRepository, categoryRepository, realEstateRepository } from "../repositories";
 import { AppError } from "../error";
 
 export const createRealEstateService = async(payloadReqBody: I.TRealEstateCreate): Promise <I.TRealEstate> =>{
 
     const {address, categoryId, ...realEstateBody} = payloadReqBody
+    //antes estava categoryId
 
     //verify address exists (ñ vamos criar middleware pois só vai ser usado no método post dessa rota)
     const foundAddress: E.Address | null = await addressRepository.findOneBy({
@@ -14,7 +17,7 @@ export const createRealEstateService = async(payloadReqBody: I.TRealEstateCreate
         city: address.city,
         state: address.state,
         number: address.number || "",
-        //estamos usando o nummber assim pq lembra q lá no schema o number é opcional
+        //estamos usando o nummber assim pq lembra q lá no schema o number é opcional (ou seja, pode ser passado ou ñ [se ñ cai como undefined])
     })
     if(foundAddress) throw new AppError("Address already exists", 409);
 
@@ -41,7 +44,23 @@ export const createRealEstateService = async(payloadReqBody: I.TRealEstateCreate
     
     await realEstateRepository.save(realEstateCreate);
 
-    return realEstateCreate
+    return realEstateCreate;
+    //return S.realEstateSchema.parse(realEstateCreate)
+
+    /* se retornassemos diretamente o REALESTATECREATE estaria acusando erro.  pois tipamos essa função como I.TRealEstate (e essa tipagem vem do schema realEstateSchema)  - o msm problema ocorre na função abaixo dessa, a READALLREALESTATESERVICE
+        para nao dar o erro a gente uso o schema (para fazer a serialização) do RETURN
+    outra coisa q poderiamos fazer é tipar essa função como a entity (class da entity) RealEstate.
+
+    ae vc se pergunta "mas o schema nao é feito com base na Entity? nao sao as msm coisa?" sim o schema foi criado com base na entity, porem nao sao as msm coisas. qndo tipamos na entity estamos dizendo q aqle dado é uma ENTIDADE. ja qndo tipamos schema estamos dizendo q é um OBJETO - viu, tipos de dados diferentes.
+       mas ai vc faz outra pergunta "mas no Js tudo ñ é objeto?" sim tudo é objeto.
+       mas na ENTITY só a instancia (class) dela q é considerada um objeto -  ela em si é considerada uma ENTIDADE.
+       (INSTANCIA = qndo vc inicializa uma classe)
+
+    entendimento:
+    sempre q tipar a função como base em um SCHEMA (como uma Interface q é criada com base em um schema) tenho q usar esse schema para serializar o RETURN dessa função
+    
+    entendimento novo: ACHO Q ISSO TUDO AI EM CIMA ESTÁ ERRADO, POIS NA TIPAGEM ESTAVA FALTANDO OMITIR 2 CAMPOS. aquela minha ideia está certa de q o schema é criado com base na entity, logo sao praticamente a msm coisa. tanto é q se retornar o REALESTATECREATE diretamente ou SERIALIZADO (com auxilio do schema) em ambos ñ vai acusar erro.
+    */
 }
 
 export const readAllRealEstateService = async(): Promise <I.TReadAllRealEstates> =>{
@@ -49,6 +68,5 @@ export const readAllRealEstateService = async(): Promise <I.TReadAllRealEstates>
         relations: {address: true}
     })
 
-    return realEstates;
-    //return S.readAllRealEstateSchemas.parse(realEstates)
+    return S.readAllRealEstateSchemas.parse(realEstates);
 }

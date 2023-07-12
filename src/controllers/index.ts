@@ -1,5 +1,5 @@
 import { createCategoryController, readAllCategoriesController, readAllRealEstateCategoryController } from "./category.controller";
-import { createRealEstateController, readAllRealEsatatesController } from "./realEstate.controller";
+import { createRealEstateController, readAllRealEsatatesController as readAllRealEstatesController } from "./realEstate.controller";
 import { createSessionController } from "./session.controllers";
 import { createUserController, deleteUserController, readAllUsersController, updateUserController } from "./user.controller";
 
@@ -10,4 +10,4 @@ createCategoryController, readAllCategoriesController,
 readAllRealEstateCategoryController,
 
 createRealEstateController,
-readAllRealEsatatesController}
+readAllRealEstatesController as readAllRealEstatesController}

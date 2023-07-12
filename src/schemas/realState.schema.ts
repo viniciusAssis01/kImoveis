@@ -6,7 +6,9 @@ export const realEstateSchema = z.object({
     value: z.number().positive().default(0).or(z.string()),
     size: z.number().int().positive().min(1),
     address: S.addressSchema,
-    categoryId: z.number().positive().min(1),
+    category: S.categorySchema,
+    //z.number().positive().min(1)
+    //antes estava categoryId, mas na entiti ñ tem essa coluna | no dbeaber tem 
     sold: z.boolean().default(false),    
     createdAt: z.string().or(z.date()),
     updatedAt: z.string().or(z.date()),
@@ -19,7 +21,7 @@ inteiro: é considerado NUMBER
 decimal: é considerado STRING 
 leve isso em consideração na hora de tipar e validar. */
 
-export const realEstateCreateSchema = realEstateSchema.omit({id: true,createdAt: true, updatedAt: true, address: true}).extend({address: S.addressCreateSchema})
+export const realEstateCreateSchema = realEstateSchema.omit({id: true,createdAt: true, updatedAt: true, address: true, category: true}).extend({address: S.addressCreateSchema, categoryId: z.number().int()})
 
 export const readAllRealEstateSchemas = realEstateSchema.array()
 

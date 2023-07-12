@@ -5,7 +5,8 @@ export const addressSchema = z.object({
   id: z.number().positive(),
   street: z.string().max(45),
   zipCode: z.string().max(8),
-  number: z.string().max(7).nullable(),
+  number: z.string().max(7).nullish(),
+  //antes estava como nullable (e n nulish. nisso tivemos q adicionar na tipagem da coluna number [da entity address] o union type "| undefined" ->ja q estamos falando q pode ser nullo e opcional [opcional: ou seja, se ñ for passado vai ser do tipo indefinido])
   city: z.string().max(20).nonempty(),
   state: z.string().max(2).nonempty(),
 })

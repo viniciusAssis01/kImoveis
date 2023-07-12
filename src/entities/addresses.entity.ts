@@ -13,7 +13,7 @@ export class Address{
   zipCode: string;
 
   @Column({type:"varchar",length: 7, nullable: true})
-  number: string | null;
+  number: string | null | undefined;
   //qndo é "string | null" temos q definir a opção "type" no {} do decorator |
   //acho q ao passar o nullable, temos q usar a opção/propriedade "default: null"
   //na verdade nao, se ñ passar nada nesse campo, ele vai assumir null (assim usar a opção "default: null" fica redundante)
