@@ -1,4 +1,3 @@
-import { realEstateSchema } from './../schemas/realState.schema';
 import * as I from "../interfaces";
 import * as E from "../entities";
 import * as S from "../schemas"
@@ -44,8 +43,8 @@ export const createRealEstateService = async(payloadReqBody: I.TRealEstateCreate
     
     await realEstateRepository.save(realEstateCreate);
 
-    return realEstateCreate;
-    //return S.realEstateSchema.parse(realEstateCreate)
+    //return realEstateCreate;
+    return S.realEstateSchema.parse(realEstateCreate)
 
     /* se retornassemos diretamente o REALESTATECREATE estaria acusando erro.  pois tipamos essa função como I.TRealEstate (e essa tipagem vem do schema realEstateSchema)  - o msm problema ocorre na função abaixo dessa, a READALLREALESTATESERVICE
         para nao dar o erro a gente uso o schema (para fazer a serialização) do RETURN
@@ -64,9 +63,14 @@ export const createRealEstateService = async(payloadReqBody: I.TRealEstateCreate
 }
 
 export const readAllRealEstateService = async(): Promise <I.TReadAllRealEstates> =>{
-    const realEstates: Array<E.RealEstate> = await realEstateRepository.find({
+    /* const realEstates: Array<E.RealEstate> = await realEstateRepository.find({
         relations: {address: true}
-    })
+    }) */
+    //essa relacions JOIN acima equivale a essa:
+    const realEstates: Array<E.RealEstate> = await realEstateRepository.createQueryBuilder("r")
+    .leftJoinAndSelect("r.address", "address")
+    .getMany();
 
-    return S.readAllRealEstateSchemas.parse(realEstates);
+    return realEstates
+    //return S.readAllRealEstateSchemas.parse(realEstates);
 }
